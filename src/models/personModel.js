@@ -1,12 +1,5 @@
 
-let database = [
-  {
-    id: '1',
-    name: 'Haile Adugna',
-    age: 24,
-    hobbies: ['football', 'movies', 'reading', 'coding']
-  }
-];
+let database = [];
 
 const getAllPersons = () => {
   return database;
