@@ -8,9 +8,9 @@ app.use(express.json());
 const database = [
   {
     id: '1',
-    name: 'keber',
+    name: 'Haile Adugna',
     age: 24,
-    hobbies: ['dubstep']
+    hobbies: ['dubstep', 'movies', 'reading', 'coding']
   }
 ];
 

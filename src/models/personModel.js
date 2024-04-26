@@ -1,14 +1,5 @@
 const { v4: uuidv4 } = require('uuid');
 
-let database = [
-  {
-    id: '1',
-    name: 'keber',
-    age: 24,
-    hobbies: ['dubstep']
-  }
-];
-
 const getAllPersons = () => {
   return database;
 };
