@@ -1,10 +1,27 @@
 const express = require('express');
 const { v4: uuidv4 } = require('uuid');
+const Joi = require('joi');
 
 const app = express();
 app.use(express.json());
 
-const database = [];
+const database = [
+  {
+    id: '1',
+    name: 'keber',
+    age: 24,
+    hobbies: ['dubstep']
+  }
+];
+
+app.set('db', database);
+
+// Joi schema for request body validation
+const personSchema = Joi.object({
+  name: Joi.string().required(),
+  age: Joi.number().integer().required(),
+  hobbies: Joi.array().items(Joi.string()).default([]),
+});
 
 // Enable CORS
 app.use((req, res, next) => {
@@ -30,20 +47,27 @@ app.get('/person/:personId?', (req, res) => {
 
 // Create new person
 app.post('/person', (req, res) => {
-  const { name, age, hobbies } = req.body;
-  if (!name || !age) {
-    return res.status(400).json({ message: 'Name and age are required' });
+  const { error } = personSchema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ message: error.details[0].message });
   }
 
+  const { name, age, hobbies } = req.body;
+
   const id = uuidv4();
-  const newPerson = { id, name, age, hobbies: hobbies || [] };
+  const newPerson = { id, name, age, hobbies };
   database.push(newPerson);
-  res.status(201).json(newPerson);
+  res.status(200).json(newPerson);
 });
 
 // Update person
 app.put('/person/:personId', (req, res) => {
   const { personId } = req.params;
+  const { error } = personSchema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ message: error.details[0].message });
+  }
+
   const { name, age, hobbies } = req.body;
   const personIndex = database.findIndex(person => person.id === personId);
   if (personIndex === -1) {
@@ -77,7 +101,4 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: 'Internal server error' });
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+module.exports = app;
